@@ -58,3 +58,36 @@ void init(Chip8 *chip8, char *rom_path)
         printf("Error: Failed to load ROM.\n");
     }
 }
+
+int init_graphics(Chip8Graphics *gfx)
+{
+    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+        printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
+        return 0;
+    }
+
+    gfx->window = SDL_CreateWindow("CHIP-8 Emulator",
+                                SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+                                640, 320, SDL_WINDOW_SHOWN);
+    if (!gfx->window) {
+        printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
+        return 0;
+    }
+
+    gfx->renderer = SDL_CreateRenderer(gfx->window, -1, SDL_RENDERER_ACCELERATED);
+    if (!gfx->renderer) {
+        printf("Renderer could not be created! SDL_Error: %s\n", SDL_GetError());
+        return 0;
+    }
+
+    gfx->texture = SDL_CreateTexture(gfx->renderer,
+                                    SDL_PIXELFORMAT_RGBA8888,
+                                    SDL_TEXTUREACCESS_STREAMING,
+                                    64, 32);
+    if (!gfx->texture) {
+        printf("Texture could not be created! SDL_Error: %s\n", SDL_GetError());
+        return 0;
+    }
+
+    return 1;
+}

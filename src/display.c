@@ -8,7 +8,7 @@ void    display(uint8_t x, uint8_t y, uint8_t n, Chip8 *chip8)
 
     for(int row = 0; row < n; row++)
     {
-        uint8_t byte = chip8->index_register + row;
+        uint8_t byte = chip8->memory[chip8->index_register + row];
 
         for (int col = 0;  col < 8; col++)
         {

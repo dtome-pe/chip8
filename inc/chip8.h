@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdint.h>
+#include <SDL2/SDL.h>
 
 #define MEMORY_SIZE 4098
 #define FONT_ADDRESS 0x050
@@ -39,6 +40,11 @@ static const uint8_t FONT_SET[FONT_SIZE] = {
     0xF0, 0x80, 0xF0, 0x80, 0x80   // F
 };
 
+typedef struct {
+    SDL_Window *window;
+    SDL_Renderer *renderer;
+    SDL_Texture *texture;
+} Chip8Graphics;
 
 typedef struct s_chip8 {
 
@@ -59,6 +65,8 @@ typedef struct s_chip8 {
 
 
 void        init(Chip8 *chip8, char *rom_path);
+int         init_graphics(Chip8Graphics *gfx);
+
 void        chip8_key_press(Chip8 *chip8, uint8_t key);
 void        chip8_key_release(Chip8 *chip8, uint8_t key);
 uint8_t     chip8_is_key_pressed(const Chip8 *chip8, uint8_t key);
@@ -69,5 +77,5 @@ void        chip8_print_keypad(const Chip8 *chip8);
 
 uint16_t    get_16_bit_instruction(Chip8 *chip8);
 
-int         decode_and_execute(uint16_t instruction, Chip8 *chip8);
+char*       decode_and_execute(uint16_t instruction, Chip8 *chip8, Chip8Graphics *gfx);
 void        display(uint8_t x, uint8_t y, uint8_t n, Chip8 *chip8);
