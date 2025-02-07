@@ -1,6 +1,6 @@
 NAME = chip8
-	
-SRC = $(addprefix src/, chip8.c print.c init.c)
+
+SRC = $(addprefix src/, chip8.c print.c init.c utils.c decode_and_execute.c display.c)
 
 OBJ = $(patsubst src/%.c, obj/%.o, $(SRC))
 

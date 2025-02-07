@@ -6,6 +6,18 @@
 #define MEMORY_SIZE 4098
 #define FONT_ADDRESS 0x050
 #define FONT_SIZE 80 // 16 chars * 5 bytes
+#define STACK_SIZE 16
+#define TIMER_DECREMENT_PER_SECOND 60
+#define KEY_COUNT 16
+#define DEFAULT_IPS 700  // Default speed: 700 instructions per second
+#define ROM_START 0x200
+#define MAX_ROM_SIZE (MEMORY_SIZE - ROM_START)
+
+
+//bitwise pixel manipulation defines
+#define SET_PIXEL(x, y) (screen[y][(x) / 8] |= (0x80 >> ((x) % 8)))
+#define CLEAR_PIXEL(x, y) (screen[y][(x) / 8] &= ~(0x80 >> ((x) % 8)))
+#define GET_PIXEL(x, y) ((screen[y][(x) / 8] & (0x80 >> ((x) % 8))) != 0)
 
 // Declare the font set as a static constant array
 static const uint8_t FONT_SET[FONT_SIZE] = {
@@ -27,14 +39,35 @@ static const uint8_t FONT_SET[FONT_SIZE] = {
     0xF0, 0x80, 0xF0, 0x80, 0x80   // F
 };
 
+
 typedef struct s_chip8 {
 
-    uint8_t memory[MEMORY_SIZE];
+    uint8_t     memory[MEMORY_SIZE];
+    uint8_t     screen[32][8];  // 32 rows, (8x8) 64 columns
+    uint16_t    stack[STACK_SIZE];
+    uint8_t     stack_top;
+    uint8_t     delay_timer;
+    uint8_t     sound_timer;
+    uint8_t     keypad[16];
+    uint16_t    chip_speed;
+    uint8_t     registers[16];
+    uint16_t    program_counter; //program counter
+    uint16_t    index_register;
 
 
 } Chip8;
 
 
-void init(Chip8 *chip8);
-void chip8_print_memory(const Chip8 *chip8, size_t start, size_t end);
-void chip8_print_full_memory(const Chip8 *chip8);
+void        init(Chip8 *chip8, char *rom_path);
+void        chip8_key_press(Chip8 *chip8, uint8_t key);
+void        chip8_key_release(Chip8 *chip8, uint8_t key);
+uint8_t     chip8_is_key_pressed(const Chip8 *chip8, uint8_t key);
+
+void        chip8_print_memory(const Chip8 *chip8, size_t start, size_t end);
+void        chip8_print_full_memory(const Chip8 *chip8);
+void        chip8_print_keypad(const Chip8 *chip8);
+
+uint16_t    get_16_bit_instruction(Chip8 *chip8);
+
+int         decode_and_execute(uint16_t instruction, Chip8 *chip8);
+void        display(uint8_t x, uint8_t y, uint8_t n, Chip8 *chip8);
