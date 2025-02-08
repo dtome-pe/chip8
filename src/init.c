@@ -42,6 +42,7 @@ void init(Chip8 *chip8, char *rom_path)
     memset(chip8->stack, 0, sizeof(chip8->stack));
     memset(chip8->registers, 0, sizeof(chip8->registers));
 
+    chip8->stack_top = -1;
     chip8->chip_speed = DEFAULT_IPS;
     chip8->delay_timer = 0;
     chip8->sound_timer = 0;

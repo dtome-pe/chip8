@@ -79,3 +79,6 @@ uint16_t    get_16_bit_instruction(Chip8 *chip8);
 
 char*       decode_and_execute(uint16_t instruction, Chip8 *chip8, Chip8Graphics *gfx);
 void        display(uint8_t x, uint8_t y, uint8_t n, Chip8 *chip8);
+
+void        push(Chip8 *chip8);
+void        pop(Chip8 *chip8);
