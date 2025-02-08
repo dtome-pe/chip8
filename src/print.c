@@ -61,3 +61,18 @@ void chip8_print_keypad(const Chip8 *chip8) {
         printf("Key %X: %s\n", i, chip8->keypad[i] ? "Pressed" : "Released");
     }
 }
+
+void    printPC(uint16_t pc, uint8_t pointed_byte)
+{
+    print("Value not equal. PC still points at: %#04x (byte = %#04x)\n", pc, pointed_byte);
+}
+
+void printXNN(uint8_t nibble, uint16_t register_value, uint8_t nn)
+{
+    printf("Value in V%06x: %#06x, value of NN: %#06x", nibble, register_value, nn);
+}
+
+void printXY(uint8_t nibble_x, uint8_t nibble_y, uint16_t register_x, uint16_t register_y)
+{
+    printf("Value in V[%06x]: %#06x, Value in V[%06x]: %#06x", nibble_x, register_x, nibble_y, register_y);
+}

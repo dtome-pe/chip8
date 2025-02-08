@@ -22,17 +22,17 @@ int main(int argc, char **argv)
 
     init(&chip8, argv[1]);
     init_graphics(&gfx);
-    //chip8_print_full_memory(&chip8);
+    chip8_print_full_memory(&chip8);
 
     while (1)
     {
 
         uint16_t instruction = get_16_bit_instruction(&chip8);
         chip8.program_counter += 2;
+        printf("Instruction fetched: %#04x\nProgram counter incremented 2 pointing at: %#04x (byte = %#04x)\n", instruction, chip8.program_counter, chip8.memory[chip8.program_counter]);
 
-        char *instruction_made = decode_and_execute(instruction, &chip8, &gfx);
-        printf("%s\n", instruction_made);
-        
+        decode_and_execute(instruction, &chip8, &gfx);
+
         int c = getchar();
         if (c == 0x1B)
         {

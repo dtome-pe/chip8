@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include "../inc/chip8.h"
 
-void update_screen(Chip8 *chip8, Chip8Graphics *gfx)
+void    update_screen(Chip8 *chip8, Chip8Graphics *gfx)
 {
     uint32_t pixels[64 * 32];  // Temporary buffer (RGBA format)
 
@@ -23,13 +23,12 @@ void update_screen(Chip8 *chip8, Chip8Graphics *gfx)
     SDL_RenderPresent(gfx->renderer);
 }
 
-void program_counter_jumps(uint16_t instruction, Chip8 *chip8)
+void    program_counter_jumps(uint16_t instruction, Chip8 *chip8)
 {
-    uint16_t address = instruction & 0x0FFF;  // Extract NNN (12-bit address)
-    chip8->program_counter = address;  // Jump directly
+    chip8->program_counter= instruction & 0x0FFF;  // Extract NNN (12-bit address)
 }
 
-char *decode_and_execute(uint16_t instruction, Chip8 *chip8, Chip8Graphics *gfx)
+void    decode_and_execute(uint16_t instruction, Chip8 *chip8, Chip8Graphics *gfx)
 {
     uint8_t nibble1 = (instruction & 0xF000) >> 12;  // First  4 bits
     uint8_t nibble2 = (instruction & 0x0F00) >> 8;   // Second 4 bits
@@ -42,68 +41,91 @@ char *decode_and_execute(uint16_t instruction, Chip8 *chip8, Chip8Graphics *gfx)
             if (instruction == 0x00E0) { // Clear screen
                 memset(chip8->screen, 0, sizeof(chip8->screen));
                 }
-                return "clear screen";
+                return;
             if (instruction == 0x00EE) { // Return from subroutine (pop stack)
                 chip8->program_counter = chip8->stack[chip8->stack_top];
                 chip8->stack_top -= 1;
                 }
-                return "return from subroutine";
+                printf("return from subroutine\nprogram counter:%#06x\nstack size:%d\n", chip8->memory[chip8->program_counter], chip8->stack_top);
+                return;
 
         case(0x1): // Program counter jumps
             program_counter_jumps(instruction, chip8);
-            return "jump";
+            printf("Program counter jumps at: %#04x (byte = %#04x)\n", chip8->program_counter, chip8->memory[chip8->program_counter]);
+            return;
 
         case(0x2): // Jump to subroutine (jump but push previous pc address to stack)
             chip8->stack_top += 1;
             chip8->stack[chip8->stack_top] = chip8->program_counter;
             program_counter_jumps(instruction, chip8);
-            return "jump to soubroutine";
+            printf("PC address stored in stack:%#06x\nPC jump to:%#06x\n", chip8->stack[chip8->stack_top], chip8->memory[chip8->program_counter]);
+            return;
 
         case(0x3): // Skip instruction if value in  X is equal to NN
+            printXNN(nibble2, chip8->registers[nibble2], instruction & 0x00FF);
             if (chip8->registers[nibble2] == (instruction & 0x00FF))
+            {
                 chip8->program_counter += 2;
-            return "Skip instruction if equals";
+                printf("value is equal, program counter skipped to: %#06x", chip8->memory[chip8->program_counter]);
+            }
+            printf("value not equal. PC does not move");
+            printPC(chip8->program_counter, chip8->memory[chip8->program_counter]);
+            return;
 
         case(0x4): // Skip instruction if value in X is not equal to NN
+            printXNN(nibble2, chip8->registers[nibble2], instruction & 0x00FF);
             if (chip8->registers[nibble2] != (instruction & 0x00FF))
+            {
                 chip8->program_counter += 2;
-            return "Skip instruction if not equals";
+                printf("value is not equal, program counter skips instruction\n");
+                printPC(chip8->program_counter, chip8->memory[chip8->program_counter]);
+            }
+            printf("value equal. PC does not move\n");
+            printPC(chip8->program_counter, chip8->memory[chip8->program_counter]);   
+            return;
 
         case(0x05): // Skip instruction if value in X and value Y are equal
+            printXY(nibble2, nibble3, chip8->registers[nibble2], chip8->registers[nibble3]);
             if (chip8->registers[nibble2] == chip8->registers[nibble3])
+            {
                 chip8->program_counter += 2;
-            return "Skip instruction if both registers equals";
+                printf("Value between X and Y register is equal. Program counter skips instruction");
+                printPC(chip8->program_counter, chip8->memory[chip8->program_counter]);
+            }
+            print("Value not equal. PC does not move");
+            printPC(chip8->program_counter, chip8->memory[chip8->program_counter]);
+            return;
 
         case(0x6): // Set value to register
             chip8->registers[nibble2] = instruction & 0x00FF;
 
-            return "set value to register";
+            return;
 
         case(0x7): // Add value to register
             chip8->registers[nibble2] += instruction & 0x00FF;
 
-            return "add value to register";
+            return;
 
         case(0x09): // Skip instruction if value in X and value Y are not equal
             if (chip8->registers[nibble2] != chip8->registers[nibble3])
                 chip8->program_counter += 2;
-            return "Skip instruction if both registers not equals";
+            return;
 
         case(0xA): // Set Index register
             chip8->index_register = instruction & 0x0FFF;
 
-            return "set index register";
+            return;
 
         case(0xD): // display
             display(nibble2, nibble3, nibble4, chip8);
             update_screen(chip8, gfx);
-            return "display";
+            return;
 
         default:
             printf("Unknown opcode: 0x%04X\n", instruction);
-            return "error";
+            return;
 
     }
 
-    return (0);
+    return;
 }
