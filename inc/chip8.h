@@ -15,6 +15,7 @@
 #define MAX_ROM_SIZE (MEMORY_SIZE - ROM_START)
 #define PRESSED 1
 #define NOT_PRESSED 0
+#define FONT_START_ADDRESS
 
 
 //bitwise pixel manipulation defines
@@ -67,7 +68,7 @@ typedef struct s_chip8 {
 } Chip8;
 
 
-void        init(Chip8 *chip8, char *rom_path);
+int         init(Chip8 *chip8, char *rom_path);
 int         init_graphics(Chip8Graphics *gfx);
 void        init_og_instruction(Chip8 *chip8);
 
@@ -86,4 +87,6 @@ uint16_t    get_16_bit_instruction(Chip8 *chip8);
 
 void        decode_and_execute(uint16_t instruction, Chip8 *chip8, Chip8Graphics *gfx);
 void        display(uint8_t x, uint8_t y, uint8_t n, Chip8 *chip8);
+void        OxF_instruction(Chip8 *chip8, uint8_t x);
+int         get_leftmost_digit(int num);
 

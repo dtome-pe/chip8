@@ -41,7 +41,7 @@ void    decode_and_execute(uint16_t instruction, Chip8 *chip8, Chip8Graphics *gf
 
             if (instruction == 0x00E0)
                 { // Clear screen
-                printf("CLEARED SCREEN");
+               //printf("CLEARED SCREEN");
                 memset(chip8->screen, 0, sizeof(chip8->screen));
                 return;
                 }
@@ -50,13 +50,13 @@ void    decode_and_execute(uint16_t instruction, Chip8 *chip8, Chip8Graphics *gf
                 chip8->program_counter = chip8->stack[chip8->stack_top];
                 chip8->stack_top -= 1;
                 }
-                printf("return from subroutine\nprogram counter:%#06x\nstack size:%d\n", chip8->memory[chip8->program_counter], chip8->stack_top);
+                //printf("return from subroutine\nprogram counter:%#06x\nstack size:%d\n", chip8->memory[chip8->program_counter], chip8->stack_top);
                 return;
 
         case(0x1): // Program counter jumps
 
             program_counter_jumps(instruction, chip8);
-            printf("INSTRUCTION 0x1 - Program counter jumps. At: %#04x (byte = %#04x)\n", chip8->program_counter, chip8->memory[chip8->program_counter]);
+            //printf("INSTRUCTION 0x1 - Program counter jumps. At: %#04x (byte = %#04x)\n", chip8->program_counter, chip8->memory[chip8->program_counter]);
             return;
 
         case(0x2): // Jump to subroutine (jump but push previous pc address to stack)
@@ -64,32 +64,32 @@ void    decode_and_execute(uint16_t instruction, Chip8 *chip8, Chip8Graphics *gf
             chip8->stack_top += 1;
             chip8->stack[chip8->stack_top] = chip8->program_counter;
             program_counter_jumps(instruction, chip8);
-            printf("PC address stored in stack:%#04x\nPC jump to:%#04x\n", chip8->stack[chip8->stack_top], chip8->memory[chip8->program_counter]);
+            //printf("PC address stored in stack:%#04x\nPC jump to:%#04x\n", chip8->stack[chip8->stack_top], chip8->memory[chip8->program_counter]);
             return;
 
         case(0x3): // Skip instruction if value in  X is equal to NN
 
-            printXNN(nibble2, chip8->registers[nibble2], instruction & 0x00FF);
+            //printXNN(nibble2, chip8->registers[nibble2], instruction & 0x00FF);
             if (chip8->registers[nibble2] == (instruction & 0x00FF))
             {
                 chip8->program_counter += 2;
-                printf("value is equal, program counter skipped to: %#06x", chip8->memory[chip8->program_counter]);
+                //printf("value is equal, program counter skipped to: %#06x", chip8->memory[chip8->program_counter]);
             }
-            printf("value not equal. PC does not move");
-            printPC(chip8->program_counter, chip8->memory[chip8->program_counter]);
+            //printf("value not equal. PC does not move");
+            //printPC(chip8->program_counter, chip8->memory[chip8->program_counter]);
             return;
 
         case(0x4): // Skip instruction if value in X is not equal to NN
 
-            printXNN(nibble2, chip8->registers[nibble2], instruction & 0x00FF);
+            //printXNN(nibble2, chip8->registers[nibble2], instruction & 0x00FF);
             if (chip8->registers[nibble2] != (instruction & 0x00FF))
             {
                 chip8->program_counter += 2;
-                printf("value is not equal, program counter skips instruction\n");
-                printPC(chip8->program_counter, chip8->memory[chip8->program_counter]);
+                //printf("value is not equal, program counter skips instruction\n");
+                //printPC(chip8->program_counter, chip8->memory[chip8->program_counter]);
             }
-            printf("value equal. PC does not move\n");
-            printPC(chip8->program_counter, chip8->memory[chip8->program_counter]);   
+            //printf("value equal. PC does not move\n");
+            //printPC(chip8->program_counter, chip8->memory[chip8->program_counter]);   
             return;
 
         case(0x05): // Skip instruction if value in X and value Y are equal
@@ -98,16 +98,16 @@ void    decode_and_execute(uint16_t instruction, Chip8 *chip8, Chip8Graphics *gf
             if (chip8->registers[nibble2] == chip8->registers[nibble3])
             {
                 chip8->program_counter += 2;
-                printf("Value between X and Y register is equal. Program counter skips instruction");
-                printPC(chip8->program_counter, chip8->memory[chip8->program_counter]);
+                //printf("Value between X and Y register is equal. Program counter skips instruction");
+                //printPC(chip8->program_counter, chip8->memory[chip8->program_counter]);
             }
-            printf("Value not equal. PC does not move");
-            printPC(chip8->program_counter, chip8->memory[chip8->program_counter]);
+            //printf("Value not equal. PC does not move");
+            //(chip8->program_counter, chip8->memory[chip8->program_counter]);
             return;
 
         case(0x6): // Set value to register
 
-            printf("INSTRUCTION 0x6: %#04x was set at register[%#04x]", instruction & 0x00FF, nibble2);
+            //printf("INSTRUCTION 0x6: %#04x was set at register[%#04x]", instruction & 0x00FF, nibble2);
             chip8->registers[nibble2] = instruction & 0x00FF;
 
             return;
@@ -115,7 +115,7 @@ void    decode_and_execute(uint16_t instruction, Chip8 *chip8, Chip8Graphics *gf
         case(0x7): // Add value to register
 
             chip8->registers[nibble2] += instruction & 0x00FF;
-            printf("INSTRUCTION 0x7: %#04x was added to register[%#04x] Totalling: %#04x", instruction & 0x00FF, nibble2, chip8->registers[nibble2]);
+            //printf("INSTRUCTION 0x7: %#04x was added to register[%#04x] Totalling: %#04x", instruction & 0x00FF, nibble2, chip8->registers[nibble2]);
             return;
 
         case(0x8): 
@@ -150,7 +150,7 @@ void    decode_and_execute(uint16_t instruction, Chip8 *chip8, Chip8Graphics *gf
             }
             else if (nibble4 == 0x6 || nibble4 == 0xE)
             {
-                printf("INSTRUCTION 0x8\n");
+                //printf("INSTRUCTION 0x8\n");
 
                 if (chip8->og_0x8_instruction) //if og mode set, set vx with value of vy
                     chip8->registers[nibble2] = chip8->registers[nibble3]; 
@@ -172,15 +172,15 @@ void    decode_and_execute(uint16_t instruction, Chip8 *chip8, Chip8Graphics *gf
             
             if (chip8->registers[nibble2] != chip8->registers[nibble3])
             {
-                printf("INSTRUCTION 0x8: register[%#04x] (%#04x) and register[%#04x] (%#04x) are not equal.", nibble2, chip8->registers[nibble2], nibble3, chip8->registers[nibble3]);
-                printf("Program counter incremented 2 pointing at: %#04x (byte = %#04x)\n", chip8->program_counter, chip8->memory[chip8->program_counter]);
+                //printf("INSTRUCTION 0x8: register[%#04x] (%#04x) and register[%#04x] (%#04x) are not equal.", nibble2, chip8->registers[nibble2], nibble3, chip8->registers[nibble3]);
+                //printf("Program counter incremented 2 pointing at: %#04x (byte = %#04x)\n", chip8->program_counter, chip8->memory[chip8->program_counter]);
                 chip8->program_counter += 2;
             }
                 
             return;
 
         case(0xA): // Set Index register
-            printf("INSTRUCTION 0xA: Index register set to %#04x", chip8->index_register);
+            //printf("INSTRUCTION 0xA: Index register set to %#04x", chip8->index_register);
             chip8->index_register = instruction & 0x0FFF;
 
             return;
@@ -210,8 +210,10 @@ void    decode_and_execute(uint16_t instruction, Chip8 *chip8, Chip8Graphics *gf
         case(0xE):
 
             if (nibble3 == 0x9 && nibble4 == 0xE)
+            {
                 if (chip8->keys[nibble2] == PRESSED)
                     chip8->program_counter += 2;
+            }
             else if (nibble3 == 0xA && nibble4 == 0x1)
                 if (chip8->keys[nibble2] == NOT_PRESSED)
                     chip8->program_counter += 2;
@@ -220,19 +222,51 @@ void    decode_and_execute(uint16_t instruction, Chip8 *chip8, Chip8Graphics *gf
 
         case(0xF):
 
-            if (instruction & 0x00FF == 0x07)
+            if ((instruction & 0x00FF) == 0x07)
                 chip8->registers[nibble2] = chip8->delay_timer;
-            else if (instruction & 0x00FF == 0x15)
+            
+            else if ((instruction & 0x00FF) == 0x15)
                 chip8->delay_timer = chip8->registers[nibble2];
-            else if (instruction & 0x00FF == 0x17)
+            
+            else if ((instruction & 0x00FF) == 0x17)
                 chip8->sound_timer = chip8->registers[nibble2];
-            else if (instruction & 0x00FF == 0x1E)
+            
+            else if ((instruction & 0x00FF) == 0x1E)
                 chip8->index_register += chip8->registers[nibble2];
-            else if (instruction & 0x00FF == 0x0A) // blocks and wait for input
-            {
-                chip8->program_counter -= 2;
-                while()
+            
+            else if ((instruction & 0x00FF) == 0x0A) // blocks and wait for input
+                OxF_instruction(chip8, nibble2);
+            
+            else if ((instruction & 0x00FF) == 0x29) // SEt IR to point at character at vx
+                chip8->index_register = FONT_ADDRESS + (5 * chip8->registers[nibble2]);
+
+            else if ((instruction & 0x00FF) == 0x33)
+            {   
+                uint8_t value = chip8->registers[nibble2];
+
+                chip8->memory[chip8->index_register + 2] = value % 10;
+                value /= 10;
+
+                chip8->memory[chip8->index_register + 1] = value % 10;
+                value /= 10;
+
+                chip8->memory[chip8->index_register] = value;
             }
+
+            else if ((instruction & 0x00FF) == 0x55 || (instruction & 0x00FF) == 0x65)
+            {
+                for (int i = 0; i <= nibble2; i++)
+                {
+                    if ((instruction & 0x00FF) == 0x55)
+                        chip8->memory[chip8->index_register + i] = chip8->registers[i];
+                    else
+                        chip8->registers[i] = chip8->memory[chip8->index_register + i];
+                }
+            }
+
+            
+
+            return;
 
         default:
             printf("Unknown opcode: 0x%04X\n", instruction);

@@ -10,6 +10,16 @@ void handle_sigint(int sig)
     stop = 1;   // Set flag to exit loop
 }
 
+Uint32 decrement_timers(Uint32 interval, void *param) {
+    Chip8 *chip8 = (Chip8 *)param;
+    
+    if (chip8->delay_timer > 0) chip8->delay_timer--;
+    if (chip8->sound_timer > 0) chip8->sound_timer--;
+
+    //printf("decrease timers");
+    return interval; // Keep calling this function every `interval` ms
+}
+
 int main(int argc, char **argv)
 {
     if (argc != 2)
@@ -20,25 +30,18 @@ int main(int argc, char **argv)
     Chip8           chip8;
     Chip8Graphics   gfx;
 
-    init(&chip8, argv[1]);
+    if (init(&chip8, argv[1]) == 1)
+        return 1;
     init_graphics(&gfx);
-    chip8_print_full_memory(&chip8);
+    //chip8_print_full_memory(&chip8);
 
-    while (1)
+    SDL_AddTimer(1000 / 60, decrement_timers, &chip8);
+
+    while (!stop)
     {
-
         uint16_t instruction = get_16_bit_instruction(&chip8);
         chip8.program_counter += 2;
-        printf("Instruction fetched: %#04x\nProgram counter incremented 2 pointing at: %#04x (byte = %#04x)\n", instruction, chip8.program_counter, chip8.memory[chip8.program_counter]);
-
         decode_and_execute(instruction, &chip8, &gfx);
-
-        int c = getchar();
-        if (c == 0x1B)
-        {
-            printf("\nESC pressed. Exiting gracefully.\n");
-            break;
-        }
     }
 
     return 0;

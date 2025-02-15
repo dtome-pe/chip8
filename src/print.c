@@ -58,7 +58,7 @@ void chip8_print_full_memory(const Chip8 *chip8) {
 void chip8_print_keypad(const Chip8 *chip8) {
     printf("Keypad State:\n");
     for (int i = 0; i < KEY_COUNT; i++) {
-        printf("Key %X: %s\n", i, chip8->keypad[i] ? "Pressed" : "Released");
+        printf("Key %X: %s\n", i, chip8->keys[i] ? "Pressed" : "Released");
     }
 }
 

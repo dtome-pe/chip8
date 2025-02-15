@@ -38,28 +38,29 @@ void handle_input(Chip8 *chip8) {
 
             case SDL_KEYDOWN:
             case SDL_KEYUP: {
-                int pressed = (event.type == SDL_KEYDOWN) ? 1 : 0;
+                
+                printf("key pressed\n");
 
                 switch (event.key.keysym.sym) {
-                    case SDLK_1: chip8->keys[0x1] = pressed; break;
-                    case SDLK_2: chip8->keys[0x2] = pressed; break;
-                    case SDLK_3: chip8->keys[0x3] = pressed; break;
-                    case SDLK_4: chip8->keys[0xC] = pressed; break;
+                    case SDLK_1: chip8->keys[0x1] = PRESSED; break;
+                    case SDLK_2: chip8->keys[0x2] = PRESSED; break;
+                    case SDLK_3: chip8->keys[0x3] = PRESSED; break;
+                    case SDLK_4: chip8->keys[0xC] = PRESSED; break;
 
-                    case SDLK_q: chip8->keys[0x4] = pressed; break;
-                    case SDLK_w: chip8->keys[0x5] = pressed; break;
-                    case SDLK_e: chip8->keys[0x6] = pressed; break;
-                    case SDLK_r: chip8->keys[0xD] = pressed; break;
+                    case SDLK_q: chip8->keys[0x4] = PRESSED; break;
+                    case SDLK_w: chip8->keys[0x5] = PRESSED; break;
+                    case SDLK_e: chip8->keys[0x6] = PRESSED; break;
+                    case SDLK_r: chip8->keys[0xD] = PRESSED; break;
 
-                    case SDLK_a: chip8->keys[0x7] = pressed; break;
-                    case SDLK_s: chip8->keys[0x8] = pressed; break;
-                    case SDLK_d: chip8->keys[0x9] = pressed; break;
-                    case SDLK_f: chip8->keys[0xE] = pressed; break;
+                    case SDLK_a: chip8->keys[0x7] = PRESSED; break;
+                    case SDLK_s: chip8->keys[0x8] = PRESSED; break;
+                    case SDLK_d: chip8->keys[0x9] = PRESSED; break;
+                    case SDLK_f: chip8->keys[0xE] = PRESSED; break;
 
-                    case SDLK_z: chip8->keys[0xA] = pressed; break;
-                    case SDLK_x: chip8->keys[0x0] = pressed; break;
-                    case SDLK_c: chip8->keys[0xB] = pressed; break;
-                    case SDLK_v: chip8->keys[0xF] = pressed; break;
+                    case SDLK_z: chip8->keys[0xA] = PRESSED; break;
+                    case SDLK_x: chip8->keys[0x0] = PRESSED; break;
+                    case SDLK_c: chip8->keys[0xB] = PRESSED; break;
+                    case SDLK_v: chip8->keys[0xF] = PRESSED; break;
                 }
                 break;
             }
@@ -67,7 +68,7 @@ void handle_input(Chip8 *chip8) {
     }
 }
 
-void init(Chip8 *chip8, char *rom_path)
+int init(Chip8 *chip8, char *rom_path)
 {
     memset(chip8->memory, 0, MEMORY_SIZE);
 
@@ -90,12 +91,13 @@ void init(Chip8 *chip8, char *rom_path)
     // Check file extension
     if (!check_file_extension(rom_path, ".ch8")) {
         printf("Error: Invalid file extension (must be .ch8)\n");
-        return;
+        return 1;
     }
 
     // Load ROM into memory
     if (!load_rom(chip8, rom_path)) {
         printf("Error: Failed to load ROM.\n");
+        return 1;
     }
 
     init_og_instruction(chip8);
@@ -103,6 +105,7 @@ void init(Chip8 *chip8, char *rom_path)
     sleep(2);
 
     handle_input(chip8);
+    return 0;
 }
 
 int init_graphics(Chip8Graphics *gfx)
