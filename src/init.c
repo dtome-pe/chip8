@@ -28,6 +28,45 @@ int load_rom(Chip8 *chip8, const char *rom_path) {
     return 1;
 }
 
+void handle_input(Chip8 *chip8) {
+    SDL_Event event;
+    while (SDL_PollEvent(&event)) {
+        switch (event.type) {
+            case SDL_QUIT: // Close window
+                exit(0);
+                break;
+
+            case SDL_KEYDOWN:
+            case SDL_KEYUP: {
+                int pressed = (event.type == SDL_KEYDOWN) ? 1 : 0;
+
+                switch (event.key.keysym.sym) {
+                    case SDLK_1: chip8->keys[0x1] = pressed; break;
+                    case SDLK_2: chip8->keys[0x2] = pressed; break;
+                    case SDLK_3: chip8->keys[0x3] = pressed; break;
+                    case SDLK_4: chip8->keys[0xC] = pressed; break;
+
+                    case SDLK_q: chip8->keys[0x4] = pressed; break;
+                    case SDLK_w: chip8->keys[0x5] = pressed; break;
+                    case SDLK_e: chip8->keys[0x6] = pressed; break;
+                    case SDLK_r: chip8->keys[0xD] = pressed; break;
+
+                    case SDLK_a: chip8->keys[0x7] = pressed; break;
+                    case SDLK_s: chip8->keys[0x8] = pressed; break;
+                    case SDLK_d: chip8->keys[0x9] = pressed; break;
+                    case SDLK_f: chip8->keys[0xE] = pressed; break;
+
+                    case SDLK_z: chip8->keys[0xA] = pressed; break;
+                    case SDLK_x: chip8->keys[0x0] = pressed; break;
+                    case SDLK_c: chip8->keys[0xB] = pressed; break;
+                    case SDLK_v: chip8->keys[0xF] = pressed; break;
+                }
+                break;
+            }
+        }
+    }
+}
+
 void init(Chip8 *chip8, char *rom_path)
 {
     memset(chip8->memory, 0, MEMORY_SIZE);
@@ -38,7 +77,7 @@ void init(Chip8 *chip8, char *rom_path)
     }
 
     memset(chip8->screen, 0, sizeof(chip8->screen));
-    memset(chip8->keypad, 0, sizeof(chip8->keypad));
+    memset(chip8->keys, 0, sizeof(chip8->keys));
     memset(chip8->stack, 0, sizeof(chip8->stack));
     memset(chip8->registers, 0, sizeof(chip8->registers));
 
@@ -58,6 +97,12 @@ void init(Chip8 *chip8, char *rom_path)
     if (!load_rom(chip8, rom_path)) {
         printf("Error: Failed to load ROM.\n");
     }
+
+    init_og_instruction(chip8);
+
+    sleep(2);
+
+    handle_input(chip8);
 }
 
 int init_graphics(Chip8Graphics *gfx)
