@@ -72,10 +72,6 @@ int         init(Chip8 *chip8, char *rom_path);
 int         init_graphics(Chip8Graphics *gfx);
 void        init_og_instruction(Chip8 *chip8);
 
-void        chip8_key_press(Chip8 *chip8, uint8_t key);
-void        chip8_key_release(Chip8 *chip8, uint8_t key);
-uint8_t     chip8_is_key_pressed(const Chip8 *chip8, uint8_t key);
-
 void        chip8_print_memory(const Chip8 *chip8, size_t start, size_t end);
 void        chip8_print_full_memory(const Chip8 *chip8);
 void        chip8_print_keypad(const Chip8 *chip8);
@@ -89,4 +85,3 @@ void        decode_and_execute(uint16_t instruction, Chip8 *chip8, Chip8Graphics
 void        display(uint8_t x, uint8_t y, uint8_t n, Chip8 *chip8);
 void        OxF_instruction(Chip8 *chip8, uint8_t x);
 int         get_leftmost_digit(int num);
-

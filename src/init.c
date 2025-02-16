@@ -28,46 +28,6 @@ int load_rom(Chip8 *chip8, const char *rom_path) {
     return 1;
 }
 
-void handle_input(Chip8 *chip8) {
-    SDL_Event event;
-    while (SDL_PollEvent(&event)) {
-        switch (event.type) {
-            case SDL_QUIT: // Close window
-                exit(0);
-                break;
-
-            case SDL_KEYDOWN:
-            case SDL_KEYUP: {
-                
-                printf("key pressed\n");
-
-                switch (event.key.keysym.sym) {
-                    case SDLK_1: chip8->keys[0x1] = PRESSED; break;
-                    case SDLK_2: chip8->keys[0x2] = PRESSED; break;
-                    case SDLK_3: chip8->keys[0x3] = PRESSED; break;
-                    case SDLK_4: chip8->keys[0xC] = PRESSED; break;
-
-                    case SDLK_q: chip8->keys[0x4] = PRESSED; break;
-                    case SDLK_w: chip8->keys[0x5] = PRESSED; break;
-                    case SDLK_e: chip8->keys[0x6] = PRESSED; break;
-                    case SDLK_r: chip8->keys[0xD] = PRESSED; break;
-
-                    case SDLK_a: chip8->keys[0x7] = PRESSED; break;
-                    case SDLK_s: chip8->keys[0x8] = PRESSED; break;
-                    case SDLK_d: chip8->keys[0x9] = PRESSED; break;
-                    case SDLK_f: chip8->keys[0xE] = PRESSED; break;
-
-                    case SDLK_z: chip8->keys[0xA] = PRESSED; break;
-                    case SDLK_x: chip8->keys[0x0] = PRESSED; break;
-                    case SDLK_c: chip8->keys[0xB] = PRESSED; break;
-                    case SDLK_v: chip8->keys[0xF] = PRESSED; break;
-                }
-                break;
-            }
-        }
-    }
-}
-
 int init(Chip8 *chip8, char *rom_path)
 {
     memset(chip8->memory, 0, MEMORY_SIZE);
@@ -103,8 +63,6 @@ int init(Chip8 *chip8, char *rom_path)
     init_og_instruction(chip8);
 
     sleep(2);
-
-    handle_input(chip8);
     return 0;
 }
 
