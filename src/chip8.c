@@ -76,16 +76,31 @@ int main(int argc, char **argv)
         return 1;
     init_graphics(&gfx);
 
+    chip8_print_full_memory(&chip8);
+
     SDL_Init(SDL_INIT_TIMER);
     SDL_AddTimer(1000 / 60, decrement_timers, &chip8);
 
+    Uint32 last_cycle_time = SDL_GetTicks();
+
     while (!stop)
     {
-        handle_input(&chip8);
-        uint16_t instruction = get_16_bit_instruction(&chip8);
-        chip8.program_counter += 2;
-        decode_and_execute(instruction, &chip8, &gfx);
-    }
 
+        Uint32 current_time = SDL_GetTicks();
+        Uint32 elapsed_time = current_time - last_cycle_time;
+
+        if (elapsed_time >= CYCLE_TIME) {
+            last_cycle_time = current_time;  // Reset timer
+    
+            handle_input(&chip8);
+            uint16_t instruction = get_16_bit_instruction(&chip8);
+            chip8.program_counter += 2;
+            decode_and_execute(instruction, &chip8, &gfx);
+
+        } else {
+            SDL_Delay(1);  // Sleep briefly to avoid busy-waiting
+        }
+
+    }
     return 0;
 }

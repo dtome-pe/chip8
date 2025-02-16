@@ -15,7 +15,11 @@
 #define MAX_ROM_SIZE (MEMORY_SIZE - ROM_START)
 #define PRESSED 1
 #define NOT_PRESSED 0
-#define FONT_START_ADDRESS
+#define FONT_START_ADDRESS 0x050
+
+#define TARGET_IPS 500
+#define CYCLE_TIME (1000 / TARGET_IPS)  // Milliseconds per instruction
+
 
 
 //bitwise pixel manipulation defines
